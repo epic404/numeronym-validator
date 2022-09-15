@@ -1,10 +1,67 @@
-export default function isNumeronym(basePhrase, testPhrase) {
+function isNumeronym(basePhrase, testPhrase) {
   // start w/ the testPhrase and build: extractedChars & embeddedNums
-  // iterate through testPhrase and recursively check:
-    // is this character in the basePhrase (have it be a value here and minus each letter as you go, if it isn't in the remaining phrase chars then return false)
-    // is this character a number? Have a flag like "lastCharWasNumber" or something and if it is then build on that number, else add a new entry in the numbers array.
-    // by the end we want to havea extractedChars with only letters, and the embeddedNums which is an array of the numbers embedded
-  // Then we can check if the added-up numbers is equal to the count of missing letters from the basePhrase
-  // And then build the same extractedChars by taking the basePhrase and slicing it up w/ the embeddedNums
-  // And check if its equal to the extractedChars from up top.
+  let extractedChars = [];
+  let extractedNums = [];
+
+  scanChar(0);
+
+  /**
+   * Rule:
+   * The number of characters removed must be equal to the digits representing them.
+   * Example 1: Brandon = Br4n -> true
+   * Example 2: Brandon = Br2n -> false
+   */
+  if (basePhrase.length !== (extractedChars.length + getSkippedCharCount())) {
+    console.log(extractedChars)
+    console.log(extractedNums)
+    console.log('Rule: The number of characters removed must be equal to the digits representing them.');
+    return false;
+  } else {
+    return true;
+  }
+
+  function scanChar(index, lastWasNumber = false) {
+    const currentChar = testPhrase[index];
+    const isNumber = checkIsNumber(currentChar);
+
+    if (isNumber && lastWasNumber) {
+      extractedNums[extractedNums.length - 1] += currentChar;
+
+    } else if (isNumber && !lastWasNumber) {
+      extractedNums.push(currentChar);
+
+    } else {
+      const skippedCharCount = getSkippedCharCount();
+      const expectedCharIndex = skippedCharCount + index;
+
+      /**
+       * Rule:
+       * Characters must line-up in the same order.
+       * Example 1: Brandon = Br3on -> true
+       * Example 2: Brandon = Ba3on -> false
+       */
+      if (currentChar !== basePhrase[expectedCharIndex]) {
+        console.log('Rule: Characters must line-up in the same order.');
+        return false;
+      }
+
+      if (index < testPhrase.length) {
+        extractedChars.push(currentChar);
+      }
+    }
+
+    scanChar(index + 1, isNumber);
+  }
+
+  function checkIsNumber(char) {
+    return !isNaN(parseInt(char));
+  }
+
+  function getSkippedCharCount() {
+    return extractedNums.reduce((previous, current) => previous + parseInt(current), 0);
+  }
 }
+
+
+
+module.exports = isNumeronym;

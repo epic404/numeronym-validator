@@ -1,0 +1,22 @@
+{
+  "name": "numeronymizer",
+  "version": "1.0.0",
+  "description": "A validator that will tell you if a phrase is a [numeronym](https://en.wikipedia.org/wiki/Numeronym).",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/epic404/numeronymizer.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/epic404/numeronymizer/issues"
+  },
+  "homepage": "https://github.com/epic404/numeronymizer#readme",
+  "devDependencies": {
+    "jest": "^29.0.3"
+  }
+}
