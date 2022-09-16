@@ -1,56 +1,43 @@
-function isNumeronym(basePhrase, testPhrase) {
-  // start w/ the testPhrase and build: extractedChars & embeddedNums
+module.exports = function isNumeronym(basePhrase, testPhrase) {
   let extractedChars = [];
   let extractedNums = [];
+  const scanResult = scanChar(0);
 
-  scanChar(0);
-
-  /**
-   * Rule:
-   * The number of characters removed must be equal to the digits representing them.
-   * Example 1: Brandon = Br4n -> true
-   * Example 2: Brandon = Br2n -> false
-   */
+  // Rule: Characters removed must be equal the digits representing them.
   if (basePhrase.length !== (extractedChars.length + getSkippedCharCount())) {
-    console.log(extractedChars)
-    console.log(extractedNums)
-    console.log('Rule: The number of characters removed must be equal to the digits representing them.');
     return false;
   } else {
-    return true;
+    return scanResult;
   }
 
   function scanChar(index, lastWasNumber = false) {
     const currentChar = testPhrase[index];
     const isNumber = checkIsNumber(currentChar);
+    const nextIndex = index + 1;
 
     if (isNumber && lastWasNumber) {
       extractedNums[extractedNums.length - 1] += currentChar;
-
+      
     } else if (isNumber && !lastWasNumber) {
       extractedNums.push(currentChar);
-
+      
     } else {
       const skippedCharCount = getSkippedCharCount();
-      const expectedCharIndex = skippedCharCount + index;
+      const expectedCharIndex = skippedCharCount + extractedChars.length;
 
-      /**
-       * Rule:
-       * Characters must line-up in the same order.
-       * Example 1: Brandon = Br3on -> true
-       * Example 2: Brandon = Ba3on -> false
-       */
+      // Rule: Characters must line-up in the same order.
       if (currentChar !== basePhrase[expectedCharIndex]) {
-        console.log('Rule: Characters must line-up in the same order.');
         return false;
       }
 
-      if (index < testPhrase.length) {
-        extractedChars.push(currentChar);
-      }
+      extractedChars.push(currentChar);
     }
 
-    scanChar(index + 1, isNumber);
+    if (nextIndex < testPhrase.length) {
+      return scanChar(nextIndex, isNumber);
+    } else {
+      return true;
+    }
   }
 
   function checkIsNumber(char) {
@@ -61,7 +48,3 @@ function isNumeronym(basePhrase, testPhrase) {
     return extractedNums.reduce((previous, current) => previous + parseInt(current), 0);
   }
 }
-
-
-
-module.exports = isNumeronym;
